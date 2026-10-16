@@ -1,0 +1,226 @@
+###############################################################################
+# Booking.com 3D Platform - REST Client API Tests (Фаза 1)
+# 
+# Як використовувати:
+# 1. Встановіть розширення "REST Client" (Huachao Mao) у VS Code.
+#    Або відкрийте у JetBrains IDE (PyCharm, WebStorm - вбудований HTTP Client).
+# 2. Переконайтеся, що бекенд запущено: docker compose up -d (порт 8000).
+# 3. Натисніть кнопку "Send Request" над будь-яким запитом нижче.
+#
+# Змінні запитів:
+# Використовується динамічна підстановка токенів через {{login.response.body.access}}!
+###############################################################################
+
+@baseUrl = http://localhost:8000/api
+@contentType = application/json
+
+# Тестові облікові дані (з команди python manage.py seed_data)
+@demoUserEmail = user@booking3d.com
+@demoUserPassword = user12345
+
+@demoOwnerEmail = owner@booking3d.com
+@demoOwnerPassword = owner12345
+
+@demoAdminEmail = admin@booking3d.com
+@demoAdminPassword = admin12345
+
+
+###############################################################################
+# 1. СИСТЕМНИЙ HEALTH CHECK
+###############################################################################
+
+### 1.1. Перевірка статусу API та підключення до PostgreSQL
+GET {{baseUrl}}/health/
+Accept: {{contentType}}
+
+
+###############################################################################
+# 2. РЕЄСТРАЦІЯ КОРИСТУВАЧА
+###############################################################################
+
+### 2.1. Успішна реєстрація нового гостя (USER)
+# @name registerUser
+POST {{baseUrl}}/auth/register/
+Content-Type: {{contentType}}
+
+{
+  "email": "new_guest_101@booking3d.com",
+  "first_name": "Тарас",
+  "last_name": "Шевченко",
+  "phone": "+380501112233",
+  "role": "USER",
+  "password": "StrongPassword123!",
+  "password_confirm": "StrongPassword123!"
+}
+
+### 2.2. Успішна реєстрація нового орендодавця / власника житла (OWNER)
+# @name registerOwner
+POST {{baseUrl}}/auth/register/
+Content-Type: {{contentType}}
+
+{
+  "email": "new_owner_101@booking3d.com",
+  "first_name": "Леся",
+  "last_name": "Українка",
+  "phone": "+380509998877",
+  "role": "OWNER",
+  "password": "StrongPassword123!",
+  "password_confirm": "StrongPassword123!"
+}
+
+
+###############################################################################
+# 3. АВТЕНТИФІКАЦІЯ (JWT LOGIN) ТА ОТРИМАННЯ ТОКЕНІВ
+###############################################################################
+
+### 3.1. Вхід користувача (Отримання пари Access & Refresh токенів)
+# @name login
+POST {{baseUrl}}/auth/token/
+Content-Type: {{contentType}}
+
+{
+  "email": "{{demoUserEmail}}",
+  "password": "{{demoUserPassword}}"
+}
+
+### Змінні, отримані автоматично з відповіді на запит login:
+@authToken = {{login.response.body.access}}
+@refreshToken = {{login.response.body.refresh}}
+
+
+### 3.2. Вхід орендодавця (OWNER)
+# @name loginOwner
+POST {{baseUrl}}/auth/token/
+Content-Type: {{contentType}}
+
+{
+  "email": "{{demoOwnerEmail}}",
+  "password": "{{demoOwnerPassword}}"
+}
+
+@ownerAuthToken = {{loginOwner.response.body.access}}
+
+
+### 3.3. Вхід адміністратора (ADMIN)
+# @name loginAdmin
+POST {{baseUrl}}/auth/token/
+Content-Type: {{contentType}}
+
+{
+  "email": "{{demoAdminEmail}}",
+  "password": "{{demoAdminPassword}}"
+}
+
+@adminAuthToken = {{loginAdmin.response.body.access}}
+
+
+###############################################################################
+# 4. ЗАХИЩЕНІ ЕНДПОІНТИ ПРОФІЛЮ КОРИСТУВАЧА
+###############################################################################
+
+### 4.1. Отримання профілю поточного авторизованого користувача
+GET {{baseUrl}}/users/profile/
+Authorization: Bearer {{authToken}}
+Accept: {{contentType}}
+
+
+### 4.2. Часткове оновлення власного профілю (ім'я, телефон)
+PATCH {{baseUrl}}/users/profile/
+Authorization: Bearer {{authToken}}
+Content-Type: {{contentType}}
+
+{
+  "first_name": "Олексій",
+  "last_name": "Користувач",
+  "phone": "+380671234567"
+}
+
+
+### 4.3. Отримання оновленого профілю для перевірки змін
+GET {{baseUrl}}/users/profile/
+Authorization: Bearer {{authToken}}
+Accept: {{contentType}}
+
+
+###############################################################################
+# 5. ОНОВЛЕННЯ ТОКЕНА (REFRESH TOKEN)
+###############################################################################
+
+### 5.1. Отримання нового Access токена через валідний Refresh токен
+# @name tokenRefresh
+POST {{baseUrl}}/auth/token/refresh/
+Content-Type: {{contentType}}
+
+{
+  "refresh": "{{refreshToken}}"
+}
+
+@newAccessToken = {{tokenRefresh.response.body.access}}
+
+### 5.2. Перевірка роботи нового access токена
+GET {{baseUrl}}/users/profile/
+Authorization: Bearer {{newAccessToken}}
+Accept: {{contentType}}
+
+
+###############################################################################
+# 6. АВТЕНТИФІКАЦІЯ ЧЕРЕЗ GOOGLE OAUTH 2.0 (SPA FLOW)
+###############################################################################
+
+### 6.1. Тестовий виклик Google Auth з валідним/тестовим Google ID токеном
+# Примітка: ID Token отримується на фронтенді кнопкою Google Identity Services
+POST {{baseUrl}}/auth/google/
+Content-Type: {{contentType}}
+
+{
+  "credential": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjEyMyJ9.DUMMY_OR_VALID_GOOGLE_ID_TOKEN"
+}
+
+
+###############################################################################
+# 7. НЕГАТИВНІ ТЕСТИ (ВАЛІДАЦІЯ ТА ОБРОБКА ПОМИЛОК)
+###############################################################################
+
+### 7.1. Помилка реєстрації: Паролі не співпадають (Очікується 400 Bad Request)
+POST {{baseUrl}}/auth/register/
+Content-Type: {{contentType}}
+
+{
+  "email": "mismatch@booking3d.com",
+  "first_name": "Іван",
+  "last_name": "Тестер",
+  "role": "USER",
+  "password": "Password123!",
+  "password_confirm": "DIFFERENT_PASSWORD_456!"
+}
+
+### 7.2. Помилка реєстрації: Дублікат Email адреси (Очікується 400 Bad Request)
+POST {{baseUrl}}/auth/register/
+Content-Type: {{contentType}}
+
+{
+  "email": "{{demoUserEmail}}",
+  "first_name": "Клон",
+  "last_name": "Юзера",
+  "role": "USER",
+  "password": "Password123!",
+  "password_confirm": "Password123!"
+}
+
+### 7.3. Помилка входу: Невірний пароль (Очікується 401 Unauthorized)
+POST {{baseUrl}}/auth/token/
+Content-Type: {{contentType}}
+
+{
+  "email": "{{demoUserEmail}}",
+  "password": "WRONG_PASSWORD_XYZ"
+}
+
+### 7.4. Помилка доступу до профілю: Запит без заголовка Authorization (Очікується 401 Unauthorized)
+GET {{baseUrl}}/users/profile/
+Accept: {{contentType}}
+
+### 7.5. Помилка доступу до профілю: Невалідний Bearer токен (Очікується 401 Unauthorized)
+GET {{baseUrl}}/users/profile/
+Authorization: Bearer INVALID_EXPIRED_OR_MALFORMED_TOKEN
+Accept: {{contentType}}
