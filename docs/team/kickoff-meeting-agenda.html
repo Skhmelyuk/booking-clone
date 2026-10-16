@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>План установчої зустрічі — Клон Booking.com 3D</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 10mm 12mm 10mm 12mm;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color: #0f172a;
+            line-height: 1.36;
+            font-size: 10.8px;
+            background: #ffffff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .page {
+            page-break-after: always;
+            height: 275mm;
+            max-height: 275mm;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .page:last-child {
+            page-break-after: auto;
+        }
+
+        .doc-header {
+            border-bottom: 2.5px solid #003580;
+            padding-bottom: 7px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .header-title h1 {
+            font-size: 18px;
+            font-weight: 800;
+            color: #003580;
+            margin: 0 0 2px 0;
+            letter-spacing: -0.4px;
+        }
+
+        .header-title p {
+            font-size: 11px;
+            color: #475569;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .badge-kickoff {
+            background: #003580;
+            color: #ffffff;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 9.5px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            display: inline-block;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #003580;
+            margin: 0 0 6px 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 3px;
+        }
+
+        .card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 7px 9px;
+            margin-bottom: 6px;
+        }
+
+        .card-header {
+            font-weight: 700;
+            font-size: 11.2px;
+            color: #1e293b;
+            margin-bottom: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 9.8px;
+            margin-bottom: 7px;
+        }
+
+        th {
+            background: #f1f5f9;
+            color: #1e293b;
+            font-weight: 700;
+            text-align: left;
+            padding: 4.5px 6px;
+            border-bottom: 1.5px solid #cbd5e1;
+            font-size: 9.2px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        td {
+            padding: 4.5px 6px;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) td {
+            background-color: #f8fafc;
+        }
+
+        .tag {
+            display: inline-block;
+            font-size: 8.5px;
+            font-weight: 600;
+            padding: 1.5px 5px;
+            border-radius: 3px;
+            white-space: nowrap;
+        }
+
+        .tag-blue { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+        .tag-emerald { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+        .tag-amber { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+        .tag-purple { background: #f5f3ff; color: #6d28d9; border: 1px solid #ddd6fe; }
+
+        .list-dense {
+            margin: 0;
+            padding-left: 14px;
+        }
+
+        .list-dense li {
+            margin-bottom: 2px;
+        }
+
+        .footer {
+            border-top: 1px solid #e2e8f0;
+            padding-top: 5px;
+            font-size: 9px;
+            color: #64748b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-num {
+            font-weight: 600;
+            color: #334155;
+        }
+    </style>
+</head>
+<body>
+
+<!-- PAGE 1: Kickoff Agenda & Roles -->
+<div class="page">
+    <div>
+        <div class="doc-header">
+            <div class="header-title">
+                <h1>План установчої зустрічі (Kickoff Meeting)</h1>
+                <p>Сценарій першої консультації • Booking.com 3D • 3 Розробники + 3 Дизайнери</p>
+            </div>
+            <div style="text-align: right;">
+                <span class="badge-kickoff">45 ХВИЛИН</span><br>
+                <span style="font-size: 9px; color: #64748b; margin-top: 2px; display: inline-block;">Django 5 + 3ds Max</span>
+            </div>
+        </div>
+
+        <div class="section-title">⏱️ 1. Таймінг та регламент зустрічі (45 хвилин)</div>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 15%;">Блок</th>
+                    <th style="width: 15%;">Час</th>
+                    <th style="width: 50%;">Питання порядку денного</th>
+                    <th style="width: 20%;">Хто веде</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Частина 1</strong></td>
+                    <td><span class="tag tag-amber">5 хв</span></td>
+                    <td>Візія проєкту, унікальність фічі 3D-турів, бізнес-мета для портфоліо</td>
+                    <td>Керівник / Ментор</td>
+                </tr>
+                <tr>
+                    <td><strong>Частина 2</strong></td>
+                    <td><span class="tag tag-blue">10 хв</span></td>
+                    <td>Презентація 6 ролей команди: 3 дизайнери та 3 розробники</td>
+                    <td>Уся команда</td>
+                </tr>
+                <tr>
+                    <td><strong>Частина 3</strong></td>
+                    <td><span class="tag tag-emerald">10 хв</span></td>
+                    <td>Огляд технологічного стека (React, Django 5 + DRF, PostgreSQL, 3ds Max)</td>
+                    <td>Dev 1 & Dev 2</td>
+                </tr>
+                <tr>
+                    <td><strong>Частина 4</strong></td>
+                    <td><span class="tag tag-purple">10 хв</span></td>
+                    <td>Протокол "Cold Start" та пайплайн передачі 3D-рендерів у веб</td>
+                    <td>Дизайнери 1, 2 + Dev 3</td>
+                </tr>
+                <tr>
+                    <td><strong>Частина 5</strong></td>
+                    <td><span class="tag tag-blue">10 хв</span></td>
+                    <td>Чеклист на Sprint 1, правила комунікації, сесія Q&A</td>
+                    <td>Керівник / Тімлід</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="section-title">👥 2. Розподіл зон відповідальності в команді (6 спеціалістів)</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-bottom: 6px;">
+            <div class="card" style="border-left: 3.5px solid #003580;">
+                <div class="card-header">
+                    <span>Команда розробників (3 чол.)</span>
+                    <span class="tag tag-blue">Інженерія</span>
+                </div>
+                <ul class="list-dense" style="font-size: 9.8px; color: #334155;">
+                    <li><strong>Dev 1 (Backend Core):</strong> Django 5 + DRF, SimpleJWT, пошуковий рушій, бізнес-логіка бронювань.</li>
+                    <li><strong>Dev 2 (Backend DB):</strong> 11 моделей Django ORM, облік фото та 3D-медіа, календар, Django Admin.</li>
+                    <li><strong>Dev 3 (Frontend Lead):</strong> React 18, Tailwind, інтерактивна 3D-галерея інтер'єру, кабінети.</li>
+                </ul>
+            </div>
+
+            <div class="card" style="border-left: 3.5px solid #d97706;">
+                <div class="card-header">
+                    <span>Команда дизайнерів (3 чол.)</span>
+                    <span class="tag tag-amber">Дизайн & 3D</span>
+                </div>
+                <ul class="list-dense" style="font-size: 9.8px; color: #334155;">
+                    <li><strong>Дизайнер №1 (3D / 3ds Max):</strong> моделювання приміщень, світло, матеріали, WebP-рендери.</li>
+                    <li><strong>Дизайнер №2 (UX/UI):</strong> User Flow, Wireframes, Figma UI Kit, клієнтські екрани.</li>
+                    <li><strong>Дизайнер №3 (Brand & Dashboard):</strong> брендбук, логотип, кабінет власника, промо-відео 30–60с.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <span>Клон Booking.com 3D • План установчої зустрічі</span>
+        <span class="page-num">Сторінка 1 з 2</span>
+    </div>
+</div>
+
+<!-- PAGE 2: Cold Start & Sprint 1 Checklist -->
+<div class="page">
+    <div>
+        <div class="doc-header">
+            <div class="header-title">
+                <h1>"Cold Start" Протокол та Чеклист Спринту 1</h1>
+                <p>Правила одночасного старту • Завдання на перший тиждень • Booking 3D</p>
+            </div>
+            <div style="text-align: right;">
+                <span class="badge-kickoff">Старт проєкту</span>
+            </div>
+        </div>
+
+        <div class="section-title">⚡ 3. Протокол "Cold Start": Чому розробники не чекають дизайнерів</div>
+        <div class="card" style="border-left: 3.5px solid #7c3aed; margin-bottom: 7px;">
+            <div style="font-size: 9.8px; color: #334155; line-height: 1.45;">
+                • <strong>Дні 1–3:</strong> Дизайнери затверджують базові кольори та шрифти ➔ Фронтендер записує їх у <code>tailwind.config.js</code>. 3D-дизайнер підбирає референси та починає будувати стіни.<br>
+                • <strong>Тиждень 1–2:</strong> UX-дизайнер видає чорно-білі <strong>Wireframes</strong> ➔ Фронтендер верстає структуру на Tailwind без декору. Бекендери реалізують моделі Django, Auth та Swagger.<br>
+                • <strong>Тиждень 3+:</strong> Дизайнери віддають фінальний <strong>UI Kit та перші 3D-рендери</strong> ➔ Розробники просто оновлюють класи поверх готової логіки.
+            </div>
+        </div>
+
+        <div class="section-title">✅ 4. Чеклист першого тижня (Sprint 1)</div>
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 5px; padding: 7px 9px; font-size: 9.8px; margin-bottom: 7px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                <div>
+                    <strong style="color: #003580;">Організація та Комунікація:</strong>
+                    <ul class="list-dense" style="color: #334155; margin-top: 3px;">
+                        <li>[ ] Створити спільний чат команди в Telegram/Discord.</li>
+                        <li>[ ] Створити спільний репозиторій на GitHub.</li>
+                        <li>[ ] Затвердити час щотижневого загального синку.</li>
+                    </ul>
+                </div>
+                <div>
+                    <strong style="color: #003580;">Технічні завдання Sprint 1:</strong>
+                    <ul class="list-dense" style="color: #334155; margin-top: 3px;">
+                        <li>[ ] Запустити Docker Compose (Django 5 + PostgreSQL 16).</li>
+                        <li>[ ] Розпочати моделювання стін 1-ї квартири в 3ds Max.</li>
+                        <li>[ ] Підготувати чорно-білі Wireframes пошуку та житла.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title">📞 5. Правила взаємодії та командної гігієни</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 7px;">
+            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 5px; padding: 6px 8px; font-size: 9.8px; color: #166534;">
+                <strong>Щотижнева синхронізація (Weekly Sync):</strong> Щопонеділка о 18:00 (15-20 хвилин) — кожен показує прогрес у робочому середовищі (Figma, 3ds Max, Swagger, Django Admin).
+            </div>
+            <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 5px; padding: 6px 8px; font-size: 9.8px; color: #1e40af;">
+                <strong>Git & Code Review:</strong> Жодного пушу в гілку <code>main</code> напряму. Усі зміни через Pull Request з коротким описом та перевіркою іншим розробником.
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <span>Клон Booking.com 3D • План установчої зустрічі</span>
+        <span class="page-num">Сторінка 2 з 2</span>
+    </div>
+</div>
+
+</body>
+</html>

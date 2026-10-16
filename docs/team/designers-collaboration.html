@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Протокол взаємодії з дизайнерами — Клон Booking.com 3D</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 10mm 12mm 10mm 12mm;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color: #0f172a;
+            line-height: 1.36;
+            font-size: 10.8px;
+            background: #ffffff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .page {
+            page-break-after: always;
+            height: 275mm;
+            max-height: 275mm;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .page:last-child {
+            page-break-after: auto;
+        }
+
+        .doc-header {
+            border-bottom: 2.5px solid #d97706;
+            padding-bottom: 7px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .header-title h1 {
+            font-size: 18px;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0 0 2px 0;
+            letter-spacing: -0.4px;
+        }
+
+        .header-title p {
+            font-size: 11px;
+            color: #475569;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .badge-amber {
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            color: #b45309;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 9.5px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            display: inline-block;
+        }
+
+        .badge-3d {
+            background: #f5f3ff;
+            border: 1px solid #ddd6fe;
+            color: #6d28d9;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 9.5px;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0 0 6px 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 3px;
+        }
+
+        .alert-box {
+            background: #fffbeb;
+            border: 1px solid #fef3c7;
+            border-left: 4px solid #d97706;
+            padding: 7px 10px;
+            border-radius: 4px;
+            font-size: 10.2px;
+            margin-bottom: 8px;
+            color: #92400e;
+        }
+
+        .alert-box strong {
+            color: #78350f;
+        }
+
+        .card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 7px 9px;
+            margin-bottom: 6px;
+        }
+
+        .card-header {
+            font-weight: 700;
+            font-size: 11.2px;
+            color: #1e293b;
+            margin-bottom: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 9.8px;
+            margin-bottom: 7px;
+        }
+
+        th {
+            background: #f8fafc;
+            color: #334155;
+            font-weight: 700;
+            text-align: left;
+            padding: 5px 6px;
+            border-bottom: 1.5px solid #cbd5e1;
+            font-size: 9.2px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        td {
+            padding: 5px 6px;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) td {
+            background-color: #fafbfd;
+        }
+
+        .tag {
+            display: inline-block;
+            font-size: 8.5px;
+            font-weight: 600;
+            padding: 1.5px 5px;
+            border-radius: 3px;
+            white-space: nowrap;
+        }
+
+        .tag-amber { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+        .tag-blue { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+        .tag-emerald { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+        .tag-purple { background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; }
+        .tag-rose { background: #ffe4e6; color: #be123c; border: 1px solid #fecdd3; }
+
+        .designer-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            margin-bottom: 7px;
+        }
+
+        .designer-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 6px 8px;
+            border-top: 3.5px solid #d97706;
+        }
+
+        .designer-card.d1 { border-top-color: #7c3aed; }
+        .designer-card.d2 { border-top-color: #0284c7; }
+        .designer-card.d3 { border-top-color: #d97706; }
+
+        .designer-card .role-title {
+            font-weight: 800;
+            font-size: 10.5px;
+            color: #0f172a;
+            margin-bottom: 3px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .list-dense {
+            margin: 0;
+            padding-left: 14px;
+        }
+
+        .list-dense li {
+            margin-bottom: 2px;
+        }
+
+        .footer {
+            border-top: 1px solid #e2e8f0;
+            padding-top: 5px;
+            font-size: 9px;
+            color: #64748b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-num {
+            font-weight: 600;
+            color: #334155;
+        }
+    </style>
+</head>
+<body>
+
+<!-- PAGE 1: Cold Start & Team Structure -->
+<div class="page">
+    <div>
+        <div class="doc-header">
+            <div class="header-title">
+                <h1>Протокол взаємодії: Розробники & 3 Дизайнери</h1>
+                <p>Регламент синхронізації 3 розробників та 3 дизайнерів • Клон Booking.com 3D</p>
+            </div>
+            <div style="text-align: right;">
+                <span class="badge-amber">Дизайн & 3D Інтер'єри</span><br>
+                <span class="badge-3d" style="margin-top: 2px;">Cold Start Protocol</span>
+            </div>
+        </div>
+
+        <div class="alert-box">
+            <strong>⚡ Принцип одночасного старту ("Cold Start"):</strong> Розробники та дизайнери стартують одночасно. <strong>Розробники НЕ чекають фінальних макетів або рендерів</strong>, а дизайнери <strong>НЕ поспішають видавати готовий UI без дослідження</strong>. Робота розділена на 3 узгоджені такти.
+        </div>
+
+        <div class="section-title">⏱️ Матриця фаз одночасного старту (Cold Start Protocol)</div>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 14%;">Період</th>
+                    <th style="width: 38%;">Команда дизайнерів (3 дизайнери)</th>
+                    <th style="width: 32%;">Команда розробників (3 розробники)</th>
+                    <th style="width: 16%;">Точка Handoff</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Дні 1–3</strong><br><span class="tag tag-amber">Підготовка</span></td>
+                    <td>Вибір палітри (Primary, Accent), шрифтів. 3D-дизайнер обирає планування 2–3 квартир для моделювання.</td>
+                    <td>Розгортання Docker, PostgreSQL 16, Django 5 REST API та каркасу React 18 з Tailwind CSS.</td>
+                    <td><span class="tag tag-amber">Design Tokens</span><br>Змінні кольорів у tailwind.config.js</td>
+                </tr>
+                <tr>
+                    <td><strong>Тижні 1–2</strong><br><span class="tag tag-blue">Фаза 1 (MVP)</span></td>
+                    <td>User Flow, чорно-білі <strong>Wireframes</strong> (UX). Моделювання стін та меблів у <strong>3ds Max</strong>. Логотип.</td>
+                    <td>Auth (JWT), міграції 11 таблиць БД, Swagger API, верстка Wireframe-структур на Tailwind без декору.</td>
+                    <td><span class="tag tag-blue">Wireframes</span><br>Фронтендер знає сітку та роутинг</td>
+                </tr>
+                <tr>
+                    <td><strong>Тиждень 3+</strong><br><span class="tag tag-emerald">Фаза 2–3</span></td>
+                    <td>Повний <strong>Figma UI Kit</strong>. Текстури та світло у 3ds Max ➔ перші <strong>готові 3D-рендери</strong> (3–6 шт.).</td>
+                    <td>Підключення API, фільтри цін/зручностей, транзакція від Overbooking, вбудовування 3D-галереї.</td>
+                    <td><span class="tag tag-emerald">UI Kit & 3D</span><br>Стилізація та інтеграція рендерів</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="section-title" style="margin-top: 6px;">👥 Склад команди дизайну та потоки артефактів</div>
+        
+        <div class="designer-grid">
+            <div class="designer-card d1">
+                <div class="role-title">
+                    <span>Дизайнер №1: 3D / 3ds Max</span>
+                    <span class="tag tag-purple">3D Інтер'єри</span>
+                </div>
+                <div style="font-size: 9.5px; color: #475569; margin-bottom: 3px;">Артефакти: 3D-сцени, матеріали, світло Corona/V-Ray, 3–6 ракурсів WebP</div>
+                <div style="font-size: 9px; color: #6d28d9; font-weight: 600;">➔ Передає: WebP-рендери до Dev 2 (DB) та Dev 3 (Галерея)</div>
+            </div>
+
+            <div class="designer-card d2">
+                <div class="role-title">
+                    <span>Дизайнер №2: UX/UI Lead</span>
+                    <span class="tag tag-blue">UX & Design System</span>
+                </div>
+                <div style="font-size: 9.5px; color: #475569; margin-bottom: 3px;">Артефакти: User Flow, Wireframes, Figma UI Kit, Клієнтські екрани</div>
+                <div style="font-size: 9px; color: #0284c7; font-weight: 600;">➔ Передає: User Flow до Dev 1; UI Kit до Dev 3</div>
+            </div>
+
+            <div class="designer-card d3">
+                <div class="role-title">
+                    <span>Дизайнер №3: Brand & UI</span>
+                    <span class="tag tag-amber">Бренд & Кабінети</span>
+                </div>
+                <div style="font-size: 9.5px; color: #475569; margin-bottom: 3px;">Артефакти: Логотип, брендбук, кабінет власника, проморолик 30–60с</div>
+                <div style="font-size: 9px; color: #b45309; font-weight: 600;">➔ Передає: Макети адмінки/власника та відео до Dev 3</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <span>Клон Booking.com 3D • Документація взаємодії з дизайнерами</span>
+        <span class="page-num">Сторінка 1 з 3</span>
+    </div>
+</div>
+
+<!-- PAGE 2: Roles 1, 2, 3 Details -->
+<div class="page">
+    <div>
+        <div class="doc-header">
+            <div class="header-title">
+                <h1>Зони відповідальності: 3D, UX/UI та Бренд</h1>
+                <p>Деталізація артефактів • 3ds Max Пайплайн • Точки передачі (Handoff)</p>
+            </div>
+            <div style="text-align: right;">
+                <span class="badge-amber">Деталізація Handoff</span>
+            </div>
+        </div>
+
+        <!-- Designer 1 -->
+        <div class="card" style="border-left: 3.5px solid #7c3aed; margin-bottom: 8px;">
+            <div class="card-header">
+                <span>🛋️ Дизайнер №1: 3D Designer / 3ds Max (Візуалізація інтер'єрів)</span>
+                <span class="tag tag-purple">Головна фіча MVP</span>
+            </div>
+            <div style="font-size: 10px; color: #334155; margin-bottom: 4px;">
+                <strong>Що створює:</strong>
+                <ul class="list-dense">
+                    <li>3D-моделювання геометрії кімнат, корпусних меблів, предметів декору та сантехніки в <strong>Autodesk 3ds Max</strong>.</li>
+                    <li>Налаштування реалістичних матеріалів (дерево, скло, текстиль) та освітлення (Corona Renderer або V-Ray).</li>
+                    <li>Рендеринг <strong>3–6 ракурсів</strong> на кожен об'єкт: вітальня, спальня, кухня, ванна кімната, кутовий ракурс.</li>
+                    <li>Постобробка та експорт в оптимізований формат <strong>WebP/JPG</strong> (1920×1080px, розмір &lt; 300 КБ для швидкої роботи у вебі).</li>
+                </ul>
+            </div>
+            <div style="background: #fdf4ff; border: 1px solid #fae8ff; border-radius: 4px; padding: 4px 7px; font-size: 9.5px; color: #6b21a8;">
+                <strong>➔ Точка передачі (Handoff):</strong> файли передаються з чіткими назвами (наприклад, <code>prop1_living_angle1.webp</code>) розробнику БД (Dev 2) для сідера та верстальнику (Dev 3) для налаштування галереї.
+            </div>
+        </div>
+
+        <!-- Designer 2 -->
+        <div class="card" style="border-left: 3.5px solid #0284c7; margin-bottom: 8px;">
+            <div class="card-header">
+                <span>🎨 Дизайнер №2: UX/UI Designer (Дослідження & Design System)</span>
+                <span class="tag tag-blue">UX & Клієнтський UI</span>
+            </div>
+            <div style="font-size: 10px; color: #334155; margin-bottom: 4px;">
+                <strong>Що створює:</strong>
+                User Flow, Customer Journey Map, чорно-білі Wireframes, повна <strong>Figma Design System & UI Kit</strong> (кнопки, інпути валідації, картки помешкань із бейджем "3D Тур", зірковий рейтинг 1–10, інтерактивний календар). Макети: Головна, Каталог із фільтрами, Сторінка житла з 3D-галереєю, Оформлення бронювання, Кабінет гостя.
+            </div>
+            <div style="background: #f0f9ff; border: 1px solid #e0f2fe; border-radius: 4px; padding: 4px 7px; font-size: 9.5px; color: #0369a1;">
+                <strong>➔ Вимоги до Handoff:</strong> обов'язковий Auto-Layout для компонентів та прив'язка кольорів до токенів Figma.
+            </div>
+        </div>
+
+        <!-- Designer 3 -->
+        <div class="card" style="border-left: 3.5px solid #d97706; margin-bottom: 4px;">
+            <div class="card-header">
+                <span>🏷️ Дизайнер №3: Brand & Dashboard UI Designer (Айдентика & Відео)</span>
+                <span class="tag tag-amber">Бренд & Промо-відео</span>
+            </div>
+            <div style="font-size: 10px; color: #334155; margin-bottom: 4px;">
+                <strong>Що створює:</strong>
+                Унікальна назва сервісу, логотип (горизонтальний, фавікон, світла/темна версії), компактний Brandbook, SVG-іконки зручностей, макети кабінету власника житла та адмінпанелі, адаптив під планшети та смартфони, а також <strong>проморолик 30–60 секунд</strong> із демонстрацією 3D-інтер'єру та бронювання для фінального захисту.
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <span>Клон Booking.com 3D • Документація взаємодії з дизайнерами</span>
+        <span class="page-num">Сторінка 2 з 3</span>
+    </div>
+</div>
+
+<!-- PAGE 3: QA, Summary Matrix, Recommendations -->
+<div class="page">
+    <div>
+        <div class="doc-header">
+            <div class="header-title">
+                <h1>Регламент QA та Зведена матриця Handoff</h1>
+                <p>Контроль якості верстки • Матриця артефактів • Поради студентам</p>
+            </div>
+            <div style="text-align: right;">
+                <span class="badge-amber">Контроль якості</span>
+            </div>
+        </div>
+
+        <div class="section-title">🔍 Регламент комунікації та Design QA (Перевірка верстки)</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-bottom: 7px;">
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 5px; padding: 6px 8px; font-size: 10px;">
+                <strong style="color: #1e293b; display: block; margin-bottom: 2px;">1. Щотижневий Design-Dev Sync</strong>
+                Короткий 20-хвилинний дзвінок щопонеділка для розбору нових макетів Figma, узгодження 3D-рендерів та уточнення технічних обмежень бекенду.
+            </div>
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 5px; padding: 6px 8px; font-size: 10px;">
+                <strong style="color: #1e293b; display: block; margin-bottom: 2px;">2. Процедура Design Review (QA)</strong>
+                Фронтендер показує екран на тестовому стенді. Дизайнери перевіряють Pixel-Perfect, відступи (8pt grid), контрастність, рендеринг шрифтів та адаптив.
+            </div>
+        </div>
+
+        <div class="section-title">📊 Підсумкова матриця передачі артефактів (Handoff Matrix)</div>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 25%;">Артефакт</th>
+                    <th style="width: 20%;">Відповідальний</th>
+                    <th style="width: 20%;">Отримувач</th>
+                    <th style="width: 15%;">Формат</th>
+                    <th style="width: 20%;">Термін</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Палітра & Шрифти</strong></td>
+                    <td>Дизайнер №2 & №3</td>
+                    <td>Усі розробники</td>
+                    <td>Figma Tokens / Hex</td>
+                    <td><span class="tag tag-amber">Дні 1–3</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Wireframes & User Flow</strong></td>
+                    <td>Дизайнер №2</td>
+                    <td>Dev 1, Dev 2, Dev 3</td>
+                    <td>Figma Flow / Miro</td>
+                    <td><span class="tag tag-blue">Тиждень 1–2</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Логотип & SVG іконки</strong></td>
+                    <td>Дизайнер №3</td>
+                    <td>Dev 3 (UI), Dev 2 (seed)</td>
+                    <td>SVG / PNG WebP</td>
+                    <td><span class="tag tag-blue">Тиждень 1–2</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Перші 3D-рендери (3ds Max)</strong></td>
+                    <td>Дизайнер №1</td>
+                    <td>Dev 2 (DB), Dev 3 (Галерея)</td>
+                    <td>WebP (&lt; 300KB)</td>
+                    <td><span class="tag tag-purple">Тиждень 2–3</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Figma UI Kit & Макети</strong></td>
+                    <td>Дизайнер №2 & №3</td>
+                    <td>Dev 3 (Frontend)</td>
+                    <td>Figma Auto-layout</td>
+                    <td><span class="tag tag-emerald">Тиждень 2–3</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Промо-відео (30–60с)</strong></td>
+                    <td>Дизайнер №3</td>
+                    <td>Dev 3 (Лендинг) & Команда</td>
+                    <td>MP4 (1080p)</td>
+                    <td><span class="tag tag-rose">Тиждень 4 (Фінал)</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 5px; padding: 6px 10px; font-size: 10px; color: #166534;">
+            <strong>💡 Порада для команди Booking 3D:</strong> Тісний зв'язок між 3D-дизайнером і фронтендером — запорука успіху. Тестуйте інтерактивне перемикання рендерів у браузері якомога раніше, щоб переконатися, що зображення швидко завантажуються навіть на мобільних пристроях!
+        </div>
+    </div>
+
+    <div class="footer">
+        <span>Клон Booking.com 3D • Документація взаємодії з дизайнерами</span>
+        <span class="page-num">Сторінка 3 з 3</span>
+    </div>
+</div>
+
+</body>
+</html>
