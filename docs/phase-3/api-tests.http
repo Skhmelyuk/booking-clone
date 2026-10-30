@@ -1,0 +1,145 @@
+###############################################################################
+# Booking.com 3D Platform - REST Client API Tests (Фаза 3)
+#
+# Опис:
+# Тестові запити для перевірки деталей помешкання з 3D-рендер інтер'єру,
+# календаря зайнятості, особистого кабінету гостя, скасування бронювання,
+# модуля "Обране" (Favorites) та кабінету орендодавця (Owner API).
+###############################################################################
+
+@baseUrl = http://localhost:8000/api
+@contentType = application/json
+
+# Облікові дані з команди seed_data
+@demoUserEmail = user@booking3d.com
+@demoUserPassword = user12345
+
+@demoOwnerEmail = owner@booking3d.com
+@demoOwnerPassword = owner12345
+
+
+###############################################################################
+# 1. АВТЕНТИФІКАЦІЯ
+###############################################################################
+
+### 1.1. Вхід користувача (Guest / User)
+# @name loginUser
+POST {{baseUrl}}/auth/token/
+Content-Type: {{contentType}}
+
+{
+  "email": "{{demoUserEmail}}",
+  "password": "{{demoUserPassword}}"
+}
+
+@userToken = {{loginUser.response.body.access}}
+
+
+### 1.2. Вхід орендодавця (OWNER)
+# @name loginOwner
+POST {{baseUrl}}/auth/token/
+Content-Type: {{contentType}}
+
+{
+  "email": "{{demoOwnerEmail}}",
+  "password": "{{demoOwnerPassword}}"
+}
+
+@ownerToken = {{loginOwner.response.body.access}}
+
+
+###############################################################################
+# 2. ДЕТАЛІ ЖИТЛА ТА 3D-ВІЗУАЛІЗАЦІЇ
+###############################################################################
+
+### 2.1. Отримання ID першого житла з каталогу
+# @name getFirstProperty
+GET {{baseUrl}}/properties/
+Accept: {{contentType}}
+
+@testPropertyId = {{getFirstProperty.response.body.results[0].id}}
+
+
+### 2.2. Отримання повної інформації про об'єкт з 3D-рендерами кімнат та ракурсів
+GET {{baseUrl}}/properties/{{testPropertyId}}/
+Accept: {{contentType}}
+
+
+### 2.3. Отримання календаря зайнятих дат житла
+GET {{baseUrl}}/properties/{{testPropertyId}}/calendar/
+Accept: {{contentType}}
+
+
+###############################################################################
+# 3. МОДУЛЬ 'ОБРАНЕ' (FAVORITES)
+###############################################################################
+
+### 3.1. Додавання житла до списку обраного
+POST {{baseUrl}}/favorites/{{testPropertyId}}/
+Authorization: Bearer {{userToken}}
+Accept: {{contentType}}
+
+
+### 3.2. Отримання списку збережених об'єктів користувача
+GET {{baseUrl}}/favorites/
+Authorization: Bearer {{userToken}}
+Accept: {{contentType}}
+
+
+### 3.3. Видалення помешкання з обраного
+DELETE {{baseUrl}}/favorites/{{testPropertyId}}/
+Authorization: Bearer {{userToken}}
+Accept: {{contentType}}
+
+
+###############################################################################
+# 4. КАБІНЕТ ГОСТЯ: СПИСОК БРОНЮВАНЬ ТА СКАСУВАННЯ
+###############################################################################
+
+### 4.1. Отримання всіх бронювань поточного користувача
+# @name getMyBookings
+GET {{baseUrl}}/bookings/my/
+Authorization: Bearer {{userToken}}
+Accept: {{contentType}}
+
+@firstBookingId = {{getMyBookings.response.body[0].id}}
+
+
+### 4.2. Фільтрація: тільки активні бронювання
+GET {{baseUrl}}/bookings/my/?filter=active
+Authorization: Bearer {{userToken}}
+Accept: {{contentType}}
+
+
+### 4.3. Фільтрація: минулі бронювання
+GET {{baseUrl}}/bookings/my/?filter=past
+Authorization: Bearer {{userToken}}
+Accept: {{contentType}}
+
+
+### 4.4. Фільтрація: скасовані бронювання
+GET {{baseUrl}}/bookings/my/?filter=cancelled
+Authorization: Bearer {{userToken}}
+Accept: {{contentType}}
+
+
+### 4.5. Скасування бронювання (миттєве звільнення дат у календарі)
+PATCH {{baseUrl}}/bookings/my/{{firstBookingId}}/cancel/
+Authorization: Bearer {{userToken}}
+Accept: {{contentType}}
+
+
+###############################################################################
+# 5. КАБІНЕТ ВЛАСНИКА ЖИТЛА (OWNER API)
+###############################################################################
+
+### 5.1. Отримання списку власних об'єктів орендодавця
+GET {{baseUrl}}/owner/properties/
+Authorization: Bearer {{ownerToken}}
+Accept: {{contentType}}
+
+
+### 5.2. Отримання заявок та бронювань гостей по об'єктах орендодавця
+GET {{baseUrl}}/owner/bookings/
+Authorization: Bearer {{ownerToken}}
+Accept: {{contentType}}

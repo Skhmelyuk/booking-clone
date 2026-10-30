@@ -1,0 +1,205 @@
+###############################################################################
+# Booking.com 3D Platform - REST Client API Tests (Фаза 2)
+#
+# Опис:
+# Тестові запити для перевірки пошукового рушія, фільтрації каталогу,
+# ендпоінта перевірки доступності дат та транзакційного створення бронювань
+# з імітацією банківської картки (Mock Payment) та захистом від Overbooking.
+###############################################################################
+
+@baseUrl = http://localhost:8000/api
+@contentType = application/json
+
+# Облікові дані з команди seed_data
+@demoUserEmail = user@booking3d.com
+@demoUserPassword = user12345
+
+@demoOwnerEmail = owner@booking3d.com
+@demoOwnerPassword = owner12345
+
+
+###############################################################################
+# 1. АВТЕНТИФІКАЦІЯ
+###############################################################################
+
+### 1.1. Вхід користувача (Отримання Bearer токена)
+# @name loginGuest
+POST {{baseUrl}}/auth/token/
+Content-Type: {{contentType}}
+
+{
+  "email": "{{demoUserEmail}}",
+  "password": "{{demoUserPassword}}"
+}
+
+### Збереження токена гостя:
+@userToken = {{loginGuest.response.body.access}}
+
+
+### 1.2. Вхід орендодавця (OWNER)
+# @name loginOwner
+POST {{baseUrl}}/auth/token/
+Content-Type: {{contentType}}
+
+{
+  "email": "{{demoOwnerEmail}}",
+  "password": "{{demoOwnerPassword}}"
+}
+
+### Збереження токена власника:
+@ownerToken = {{loginOwner.response.body.access}}
+
+
+###############################################################################
+# 2. ПОШУК ТА ФІЛЬТРАЦІЯ КАТАЛОГУ ЖИТЛА (/api/properties/)
+###############################################################################
+
+### 2.1. Отримання повного каталогу (перша сторінка за замовчуванням)
+# @name getCatalog
+GET {{baseUrl}}/properties/
+Accept: {{contentType}}
+
+### Збереження ID першого помешкання з каталогу для наступних тестів:
+@testPropertyId = {{getCatalog.response.body.results[0].id}}
+
+
+### 2.2. Фільтрація за містом (регістронезалежний пошук icontains)
+GET {{baseUrl}}/properties/?city=Львів
+Accept: {{contentType}}
+
+
+### 2.3. Фільтрація за мінімальною кількістю гостей (max_guests >= 3)
+GET {{baseUrl}}/properties/?guests=3
+Accept: {{contentType}}
+
+
+### 2.4. Фільтрація за діапазоном вартості за ніч (від 1 000 до 3 000 грн)
+GET {{baseUrl}}/properties/?min_price=1000&max_price=3000
+Accept: {{contentType}}
+
+
+### 2.5. Фільтрація тільки об'єктів з 3D туром (has_3d = true)
+GET {{baseUrl}}/properties/?has_3d=true
+Accept: {{contentType}}
+
+
+### 2.6. Сортування за ціною (від дешевих до дорогих)
+GET {{baseUrl}}/properties/?ordering=price_per_night
+Accept: {{contentType}}
+
+
+### 2.7. Сортування за найвищим рейтингом
+GET {{baseUrl}}/properties/?ordering=-rating_avg
+Accept: {{contentType}}
+
+
+### 2.8. Пошук вільних помешкань на обрані дати (виключення зайнятих)
+GET {{baseUrl}}/properties/?city=Львів&check_in=2026-11-20&check_out=2026-11-25
+Accept: {{contentType}}
+
+
+###############################################################################
+# 3. ПЕРЕВІРКА ДОСТУПНОСТІ ДАТ ТА КАЛЬКУЛЯТОР ЦІНИ
+###############################################################################
+
+### 3.1. Успішна перевірка доступності дат на вільний період
+# @name checkAvailabilitySuccess
+POST {{baseUrl}}/bookings/check-availability/
+Content-Type: {{contentType}}
+
+{
+  "property_id": "{{testPropertyId}}",
+  "check_in": "2026-12-01",
+  "check_out": "2026-12-05",
+  "guests_count": 2
+}
+
+
+### 3.2. Помилка валідації: дата виїзду раніше за дату заїзду (400 Bad Request)
+POST {{baseUrl}}/bookings/check-availability/
+Content-Type: {{contentType}}
+
+{
+  "property_id": "{{testPropertyId}}",
+  "check_in": "2026-12-10",
+  "check_out": "2026-12-05",
+  "guests_count": 2
+}
+
+
+### 3.3. Помилка валідації: дата заїзду у минулому (400 Bad Request)
+POST {{baseUrl}}/bookings/check-availability/
+Content-Type: {{contentType}}
+
+{
+  "property_id": "{{testPropertyId}}",
+  "check_in": "2020-01-01",
+  "check_out": "2020-01-05",
+  "guests_count": 1
+}
+
+
+###############################################################################
+# 4. ТРАНЗАКЦІЙНЕ БРОНЮВАННЯ ТА ТЕСТ НА OVERBOOKING
+###############################################################################
+
+### 4.1. Успішне створення бронювання з імітацією картки (201 Created)
+# @name createBooking
+POST {{baseUrl}}/bookings/
+Authorization: Bearer {{userToken}}
+Content-Type: {{contentType}}
+
+{
+  "property_id": "{{testPropertyId}}",
+  "check_in": "2026-12-01",
+  "check_out": "2026-12-05",
+  "guests_count": 2,
+  "payment_card": {
+    "card_number": "4111222233334444",
+    "exp_date": "12/28",
+    "cvv": "123",
+    "card_holder": "TARAS SHEVCHENKO"
+  }
+}
+
+### Збереження ID щойно створеного бронювання:
+@createdBookingId = {{createBooking.response.body.id}}
+
+
+### 4.2. ТЕСТ НА OVERBOOKING: Повторна спроба бронювання на ті самі дати (400 Bad Request)
+# Повинно повернути повідомлення: "Обрані дати вже щойно були заброньовані іншим гостем"
+POST {{baseUrl}}/bookings/
+Authorization: Bearer {{userToken}}
+Content-Type: {{contentType}}
+
+{
+  "property_id": "{{testPropertyId}}",
+  "check_in": "2026-12-02",
+  "check_out": "2026-12-04",
+  "guests_count": 1,
+  "payment_card": {
+    "card_number": "5100111122223333",
+    "exp_date": "06/29",
+    "cvv": "999",
+    "card_holder": "PETRO DOROSHENKO"
+  }
+}
+
+
+### 4.3. Тест відмови банку (Mock Card із закінченням 0000 ➔ 400 Bad Request)
+POST {{baseUrl}}/bookings/
+Authorization: Bearer {{userToken}}
+Content-Type: {{contentType}}
+
+{
+  "property_id": "{{testPropertyId}}",
+  "check_in": "2026-12-15",
+  "check_out": "2026-12-18",
+  "guests_count": 2,
+  "payment_card": {
+    "card_number": "4111222233330000",
+    "exp_date": "10/27",
+    "cvv": "777",
+    "card_holder": "FAIL CARD TEST"
+  }
+}
